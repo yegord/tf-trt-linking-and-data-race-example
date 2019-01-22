@@ -133,7 +133,18 @@ int main() {
   auto session = MakeSession(graph.get());
 
   const std::array<TF_Output, 1> inputs{GetOutput(graph.get(), "input")};
-  const std::array<TF_Output, 1> outputs{GetOutput(graph.get(), "output")};
+  const std::array<TF_Output, 10> outputs{
+    GetOutput(graph.get(), "output_0"),
+    GetOutput(graph.get(), "output_1"),
+    GetOutput(graph.get(), "output_2"),
+    GetOutput(graph.get(), "output_3"),
+    GetOutput(graph.get(), "output_4"),
+    GetOutput(graph.get(), "output_5"),
+    GetOutput(graph.get(), "output_6"),
+    GetOutput(graph.get(), "output_7"),
+    GetOutput(graph.get(), "output_8"),
+    GetOutput(graph.get(), "output_9")
+  };
 
   const std::array<std::int64_t, 4> dims{1, 256, 256, 3};
   const auto value = std::unique_ptr<float[]>(new float[dims[0] * dims[1] * dims[2] * dims[3]]);
@@ -147,13 +158,13 @@ int main() {
 
   std::vector<std::thread> threads;
 
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < 1; ++i) {
     threads.emplace_back([&](){
       StatusPtr status(TF_NewStatus());
       assert(status);
 
-      while (true) {
-        std::array<TensorPtr, 1> output_tensors;
+      for (int j = 0; j < 100; ++j) {
+        std::array<TensorPtr, 10> output_tensors;
 
         TF_SessionRun(session.get(),
           /* run_options */ nullptr,
